@@ -12,7 +12,6 @@ import java.util.Arrays;
 public class AppTestContainer extends TestContainer {
 
     public AppTestContainer() {
-        super();
         appComponents = new ArrayList<>(Arrays.asList(
                 "com.haulmont.cuba"
                 // add CUBA premium add-ons here

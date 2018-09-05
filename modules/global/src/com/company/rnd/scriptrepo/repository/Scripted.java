@@ -14,12 +14,10 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface GroovyScript {
+public @interface Scripted {
 
     Class<? extends ScriptProvider> providerClass() default GroovyScriptProvider.class;
 
     Class<? extends ScriptExecutor> executorClass() default GroovyScriptExecutor.class;
-
-    String scriptUrl();
 
 }
