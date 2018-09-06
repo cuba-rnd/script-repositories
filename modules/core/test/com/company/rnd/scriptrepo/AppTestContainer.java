@@ -12,6 +12,7 @@ import java.util.Arrays;
 public class AppTestContainer extends TestContainer {
 
     public AppTestContainer() {
+        super();
         appComponents = new ArrayList<>(Arrays.asList(
                 "com.haulmont.cuba"
                 // add CUBA premium add-ons here
@@ -28,7 +29,8 @@ public class AppTestContainer extends TestContainer {
                 // Add this file which is located in CUBA and defines some properties
                 // specifically for test environment. You can replace it with your own
                 // or add another one in the end.
-                "test-app.properties");
+                "test-app.properties",
+                "com/company/rnd/scriptrepo/app-test.properties");
         initDbProperties();
     }
 

@@ -3,11 +3,7 @@ package com.company.rnd.scriptrepo.core;
 import com.company.rnd.scriptrepo.AppTestContainer;
 import com.company.rnd.scriptrepo.core.test.data.Customer;
 import com.company.rnd.scriptrepo.core.test.data.CustomerScriptRepository;
-import com.company.rnd.scriptrepo.repository.factory.ScriptRepositoryFactoryBean;
-import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Metadata;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
@@ -32,17 +28,11 @@ public class RepositoryProxyTest {
     @ClassRule
     public static AppTestContainer cont = AppTestContainer.Common.INSTANCE;
 
-    private Metadata metadata;
-    private Persistence persistence;
-    private DataManager dataManager;
-    private ScriptRepositoryFactoryBean repoFactory;
+    private CustomerScriptRepository repo;
 
     @Before
     public void setUp() throws Exception {
-        metadata = cont.metadata();
-        persistence = cont.persistence();
-        dataManager = AppBeans.get(DataManager.class);
-        repoFactory = AppBeans.get(ScriptRepositoryFactoryBean.class);
+        repo = AppBeans.get(CustomerScriptRepository.class);
     }
 
     @After
@@ -51,7 +41,6 @@ public class RepositoryProxyTest {
 
     @Test
     public void testRunSimpleScript() {
-        CustomerScriptRepository repo = repoFactory.createRepository(CustomerScriptRepository.class);
         UUID customerId = UUID.randomUUID();
         String newName = RandomStringUtils.randomAlphabetic(8);
         String s = repo.renameCustomer(customerId, newName);
@@ -63,7 +52,6 @@ public class RepositoryProxyTest {
 
     @Test
     public void testCreateObject() throws ParseException {
-        CustomerScriptRepository repo = repoFactory.createRepository(CustomerScriptRepository.class);
         String newName = RandomStringUtils.randomAlphabetic(8);
         Date birthDate = DateUtils.parseDate("1988-12-14", new String[]{"yyyy-MM-dd"});
         Customer c = repo.createCustomer(newName, birthDate);
