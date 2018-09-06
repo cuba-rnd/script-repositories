@@ -14,8 +14,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @Component
@@ -40,7 +40,7 @@ public class ScriptRepositoryFactoryBean {
 
         private static final Logger log = LoggerFactory.getLogger(RepositoryMethodsHandler.class);
 
-        private Map<Method, ScriptInfo> methodScriptInfoMap = new ConcurrentHashMap<>();
+        private Map<Method, ScriptInfo> methodScriptInfoMap = new HashMap<>();
 
         RepositoryMethodsHandler(Class<T> repositoryClass) {
             Method[] methods = repositoryClass.getMethods();

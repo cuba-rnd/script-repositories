@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
@@ -22,9 +23,9 @@ public class GroovyScriptProvider implements ScriptProvider {
     @Override
     public String getScript(Class<?> scriptRepositoryClass, String methodName) {
         String fileName = methodName + ".groovy";
-        log.info("Getting groovy script: " + fileName);
+        log.trace("Getting groovy script from file: " + fileName);
         InputStream resourceAsStream = scriptRepositoryClass.getResourceAsStream(fileName);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
