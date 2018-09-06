@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Scripted {
+public @interface ScriptMethod {
 
     Class<? extends ScriptProvider> providerClass() default GroovyScriptProvider.class;
 

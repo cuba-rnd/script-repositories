@@ -1,12 +1,14 @@
 package com.company.rnd.scriptrepo.core;
 
 import com.company.rnd.scriptrepo.AppTestContainer;
+import com.company.rnd.scriptrepo.core.test.data.Customer;
+import com.company.rnd.scriptrepo.core.test.data.CustomerScriptRepository;
 import com.company.rnd.scriptrepo.repository.factory.ScriptRepositoryFactoryBean;
-import com.company.rnd.scriptrepo.repository.factory.ScriptRepositoryRegistry;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +17,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +36,6 @@ public class RepositoryProxyTest {
     private Persistence persistence;
     private DataManager dataManager;
     private ScriptRepositoryFactoryBean repoFactory;
-    private ScriptRepositoryRegistry repoRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -41,7 +43,6 @@ public class RepositoryProxyTest {
         persistence = cont.persistence();
         dataManager = AppBeans.get(DataManager.class);
         repoFactory = AppBeans.get(ScriptRepositoryFactoryBean.class);
-        repoRegistry = AppBeans.get(ScriptRepositoryRegistry.class);
     }
 
     @After
@@ -49,18 +50,26 @@ public class RepositoryProxyTest {
     }
 
     @Test
-    public void testLoadUser() {
+    public void testRunSimpleScript() {
         CustomerScriptRepository repo = repoFactory.createRepository(CustomerScriptRepository.class);
-        String s = repo.renameCustomer(UUID.randomUUID(), RandomStringUtils.randomAlphabetic(8));
+        UUID customerId = UUID.randomUUID();
+        String newName = RandomStringUtils.randomAlphabetic(8);
+        String s = repo.renameCustomer(customerId, newName);
+        log.info(s);
         assertNotNull(s);
-        assertEquals("2", s.substring(0,1));
+        assertTrue(s.contains(customerId.toString()));
+        assertTrue(s.contains(newName));
     }
 
     @Test
-    public void testRegistryContainsClass() {
-        repoFactory.createRepository(CustomerScriptRepository.class);
-        Set<Class<?>> repos =  repoRegistry.getScriptRepositories();
-        assertEquals(1, repos.size());
-        assertTrue(repos.contains(CustomerScriptRepository.class));
+    public void testCreateObject() throws ParseException {
+        CustomerScriptRepository repo = repoFactory.createRepository(CustomerScriptRepository.class);
+        String newName = RandomStringUtils.randomAlphabetic(8);
+        Date birthDate = DateUtils.parseDate("1988-12-14", new String[]{"yyyy-MM-dd"});
+        Customer c = repo.createCustomer(newName, birthDate);
+        assertEquals(newName, c.getName());
+        assertEquals(birthDate, c.getBirthDate());
+        assertNotNull(c.getId());
     }
+
 }
