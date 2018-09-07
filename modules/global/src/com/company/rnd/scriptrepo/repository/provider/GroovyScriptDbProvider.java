@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.lang.reflect.Method;
 
 @Component
 public class GroovyScriptDbProvider implements ScriptProvider {
@@ -18,7 +19,10 @@ public class GroovyScriptDbProvider implements ScriptProvider {
     private DataManager dataManager;
 
     @Override
-    public String getScript(Class<?> scriptRepositoryClass, String methodName) {
+    public String getScript(Method method) {
+        Class<?> scriptRepositoryClass = method.getDeclaringClass();
+        String methodName = method.getName();
+        //Dumb implementation, does not handle different packages and overloaded methods
         String scriptName = scriptRepositoryClass.getSimpleName() + "." + methodName;
         PersistentScript script = dataManager.load(PersistentScript.class)
                 .query("select s from scriptrepo$PersistentScript s where s.name = :name")

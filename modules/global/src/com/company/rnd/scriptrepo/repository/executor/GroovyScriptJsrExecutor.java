@@ -9,6 +9,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,10 +24,10 @@ public class GroovyScriptJsrExecutor implements ScriptExecutor {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T eval(String script, String methodName, String[] argNames, Object[] args) {
+    public <T> T eval(String script, Method method, String[] argNames, Object[] args) {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine groovy = manager.getEngineByName("groovy");
-        log.trace("Evaluating script. Method: {}, argNames: {}, args: {}", methodName, argNames, args);
+        log.trace("Evaluating script. Method: {}, argNames: {}, args: {}", method.getName(), argNames, args);
         if (argNames.length != args.length) {
             throw new IllegalArgumentException(String.format("Parameters and args must be the same length. Parameters: %d args: %d", argNames.length, args.length));
         }

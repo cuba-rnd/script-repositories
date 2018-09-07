@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.company.rnd.scriptrepo.web.persistentscriptparameter.PersistentScriptParameterEdit"
+        datasource="persistentscriptparameterDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.company.rnd.scriptrepo.web.persistentscriptparameter">
+    <dsContext>
+        <datasource id="persistentscriptparameterDs"
+                    class="com.company.rnd.scriptrepo.entity.PersistentScriptParameter"
+                    view="_local"/>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="persistentscriptparameterDs">
+            <column width="250px">
+                <field property="paramOrder" id="paramOrder"/>
+                <field property="name" id="name"/>
+                <field property="parameterType" id="parameterType"/>
+            </column>
+        </fieldGroup>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>
+

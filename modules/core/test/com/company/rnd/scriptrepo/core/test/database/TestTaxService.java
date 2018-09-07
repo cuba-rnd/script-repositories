@@ -1,4 +1,4 @@
-package com.company.rnd.scriptrepo.core;
+package com.company.rnd.scriptrepo.core.test.database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 
 @Service
-public class TaxService {
+public class TestTaxService {
 
-    private static final Logger log = LoggerFactory.getLogger(TaxService.class);
+    private static final Logger log = LoggerFactory.getLogger(TestTaxService.class);
 
     @Inject
-    private TaxCalculator taxCalculator;
+    private TestTaxCalculator taxCalculator;
 
     public BigDecimal calculateTaxAmount(BigDecimal sum){
         return taxCalculator.calculateTax(sum);

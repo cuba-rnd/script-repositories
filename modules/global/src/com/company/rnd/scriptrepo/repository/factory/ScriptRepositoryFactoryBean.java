@@ -118,8 +118,8 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
             String[] paramNames = Arrays.stream(method.getParameters())
                     .map(getParameterName())
                     .toArray(String[]::new);
-            String script = provider.getScript(method.getDeclaringClass(), method.getName());
-            return executor.eval(script, method.getName(), paramNames, args);
+            String script = provider.getScript(method);
+            return executor.eval(script, method, paramNames, args);
         }
 
         private ScriptInfo createMethodInfo(Method method) {

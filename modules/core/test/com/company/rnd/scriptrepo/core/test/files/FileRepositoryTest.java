@@ -1,8 +1,6 @@
-package com.company.rnd.scriptrepo.core;
+package com.company.rnd.scriptrepo.core.test.files;
 
 import com.company.rnd.scriptrepo.AppTestContainer;
-import com.company.rnd.scriptrepo.core.test.files.Customer;
-import com.company.rnd.scriptrepo.core.test.files.CustomerScriptRepository;
 import com.haulmont.cuba.core.global.AppBeans;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.RandomStringUtils;

@@ -19,7 +19,7 @@ public class PersistentScript extends StandardEntity {
     private String name;
 
     @OneToMany(mappedBy = "persistentScript")
-    protected List<PersistentScriptParameter> paremeters;
+    protected List<PersistentScriptParameter> parameters;
 
     @Column(name = "DESCRIPTION")
     private String description;
@@ -36,12 +36,12 @@ public class PersistentScript extends StandardEntity {
     @Column(name = "SCRIPT_VERSION")
     private Integer scriptVersion;
 
-    public void setParemeters(List<PersistentScriptParameter> paremeters) {
-        this.paremeters = paremeters;
+    public void setParameters(List<PersistentScriptParameter> paremeters) {
+        this.parameters = paremeters;
     }
 
-    public List<PersistentScriptParameter> getParemeters() {
-        return paremeters;
+    public List<PersistentScriptParameter> getParameters() {
+        return parameters;
     }
 
 

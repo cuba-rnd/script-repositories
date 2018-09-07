@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,9 @@ public class GroovyScriptFileProvider implements ScriptProvider {
     private static final Logger log = LoggerFactory.getLogger(GroovyScriptFileProvider.class);
 
     @Override
-    public String getScript(Class<?> scriptRepositoryClass, String methodName) {
+    public String getScript(Method method) {
+        Class<?> scriptRepositoryClass = method.getDeclaringClass();
+        String methodName = method.getName();
         String fileName = methodName + ".groovy";
         log.trace("Getting groovy script from file: " + fileName);
         InputStream resourceAsStream = scriptRepositoryClass.getResourceAsStream(fileName);

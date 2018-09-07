@@ -1,4 +1,4 @@
-import com.company.rnd.scriptrepo.core.test.data.Customer
+import com.company.rnd.scriptrepo.core.test.files.Customer
 
 class CustomerImpl implements Customer{
 

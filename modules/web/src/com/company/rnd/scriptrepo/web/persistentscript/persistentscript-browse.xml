@@ -13,40 +13,78 @@
                 <![CDATA[select e from scriptrepo$PersistentScript e]]>
             </query>
         </groupDatasource>
+        <groupDatasource id="persistentScriptParametersDs"
+                         class="com.company.rnd.scriptrepo.entity.PersistentScriptParameter"
+                         view="persistentScriptParameter-view">
+            <query>
+                <![CDATA[select e from scriptrepo$PersistentScriptParameter e
+where e.persistentScript.id = :ds$persistentscriptsDs.id]]>
+            </query>
+        </groupDatasource>
     </dsContext>
     <dialogMode height="600"
                 width="800"/>
-    <layout expand="persistentscriptsTable"
+    <layout expand="tablesBox"
             spacing="true">
         <filter id="filter"
                 applyTo="persistentscriptsTable"
                 datasource="persistentscriptsDs">
             <properties include=".*"/>
         </filter>
-        <groupTable id="persistentscriptsTable"
-                    width="100%">
-            <actions>
-                <action id="create"/>
-                <action id="edit"/>
-                <action id="remove"/>
-            </actions>
-            <columns>
-                <column id="name"/>
-                <column id="returnType"/>
-                <column id="description"/>
-                <column id="sourceText"/>
-            </columns>
-            <rows datasource="persistentscriptsDs"/>
-            <rowsCount/>
-            <buttonsPanel id="buttonsPanel"
-                          alwaysVisible="true">
-                <button id="createBtn"
-                        action="persistentscriptsTable.create"/>
-                <button id="editBtn"
-                        action="persistentscriptsTable.edit"/>
-                <button id="removeBtn"
-                        action="persistentscriptsTable.remove"/>
-            </buttonsPanel>
-        </groupTable>
+        <hbox id="tablesBox"
+              expand="persistentscriptsTable"
+              spacing="true"
+              width="100%">
+            <groupTable id="persistentscriptsTable"
+                        height="100%">
+                <actions>
+                    <action id="create"/>
+                    <action id="edit"/>
+                    <action id="remove"/>
+                </actions>
+                <columns>
+                    <column id="name"/>
+                    <column id="returnType"/>
+                    <column id="description"/>
+                    <column id="sourceText"/>
+                </columns>
+                <rows datasource="persistentscriptsDs"/>
+                <rowsCount/>
+                <buttonsPanel id="buttonsPanel"
+                              alwaysVisible="true">
+                    <button id="createBtn"
+                            action="persistentscriptsTable.create"/>
+                    <button id="editBtn"
+                            action="persistentscriptsTable.edit"/>
+                    <button id="removeBtn"
+                            action="persistentscriptsTable.remove"/>
+                </buttonsPanel>
+            </groupTable>
+            <groupTable id="paramsGrid"
+                        height="100%"
+                        width="400px">
+                <actions>
+                    <action id="create"/>
+                    <action id="edit"/>
+                    <action id="remove"/>
+                </actions>
+                <columns>
+                    <column id="paramOrder"/>
+                    <column id="name"/>
+                    <column id="parameterType"/>
+                </columns>
+                <rows datasource="persistentScriptParametersDs"/>
+                <buttonsPanel>
+                    <button id="addPropBtn"
+                            caption="Add"
+                            invoke="onAddPropBtnClick"/>
+                    <button id="editPropBtn"
+                            action="paramsGrid.edit"/>
+                    <button id="removePropBtn"
+                            action="paramsGrid.remove"
+                            caption="Delete"/>
+                </buttonsPanel>
+            </groupTable>
+        </hbox>
     </layout>
 </window>

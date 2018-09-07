@@ -4,4 +4,6 @@
             template="com/company/rnd/scriptrepo/web/persistentscript/persistentscript-browse.xml"/>
     <screen id="scriptrepo$PersistentScript.edit"
             template="com/company/rnd/scriptrepo/web/persistentscript/persistentscript-edit.xml"/>
+    <screen id="scriptrepo$PersistentScriptParameter.edit"
+            template="com/company/rnd/scriptrepo/web/persistentscriptparameter/persistentscriptparameter-edit.xml"/>
 </screen-config>
