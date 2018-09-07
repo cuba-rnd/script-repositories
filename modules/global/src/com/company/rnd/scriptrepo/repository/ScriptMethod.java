@@ -20,4 +20,6 @@ public @interface ScriptMethod {
 
     Class<? extends ScriptExecutor> executorClass() default GroovyScriptExecutor.class;
 
+    String description() default "";
+
 }

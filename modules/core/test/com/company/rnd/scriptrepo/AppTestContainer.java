@@ -1,9 +1,12 @@
 package com.company.rnd.scriptrepo;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.haulmont.bali.util.Dom4j;
 import com.haulmont.cuba.testsupport.TestContainer;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,7 +15,8 @@ import java.util.Arrays;
 public class AppTestContainer extends TestContainer {
 
     public AppTestContainer() {
-        super();
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        StatusPrinter.print(lc);
         appComponents = new ArrayList<>(Arrays.asList(
                 "com.haulmont.cuba"
                 // add CUBA premium add-ons here
