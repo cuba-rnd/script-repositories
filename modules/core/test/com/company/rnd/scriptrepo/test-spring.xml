@@ -8,7 +8,7 @@
     <bean name="scriptRepositoryFactory" class="com.company.rnd.scriptrepo.repository.factory.ScriptRepositoryFactoryBean">
         <property name="basePackages">
             <list>
-                <value>com.company.rnd.scriptrepo.core.test</value>
+                <value>com.company.rnd.scriptrepo</value>
             </list>
         </property>
     </bean>

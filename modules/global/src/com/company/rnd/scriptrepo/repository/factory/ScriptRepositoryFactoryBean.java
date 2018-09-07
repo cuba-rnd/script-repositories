@@ -100,18 +100,11 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
 
     static class RepositoryMethodsHandler<T> implements InvocationHandler, Serializable {
 
-        private final Object defaultDelegate = new Object();
-
         private static final Logger log = LoggerFactory.getLogger(RepositoryMethodsHandler.class);
 
-        private Map<Method, ScriptInfo> methodScriptInfoMap = new ConcurrentHashMap<>();
+        private final Object defaultDelegate = new Object();
 
-        private ScriptInfo createMethodInfo(Method method) {
-            ScriptMethod annotationConfig = method.getAnnotation(ScriptMethod.class);
-            ScriptProvider provider = AppContext.getApplicationContext().getBean(annotationConfig.providerClass());
-            ScriptExecutor executor = AppContext.getApplicationContext().getBean(annotationConfig.executorClass());
-            return new ScriptInfo(provider, executor);
-        }
+        private Map<Method, ScriptInfo> methodScriptInfoMap = new ConcurrentHashMap<>();
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -127,6 +120,13 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                     .toArray(String[]::new);
             String script = provider.getScript(method.getDeclaringClass(), method.getName());
             return executor.eval(script, method.getName(), paramNames, args);
+        }
+
+        private ScriptInfo createMethodInfo(Method method) {
+            ScriptMethod annotationConfig = method.getAnnotation(ScriptMethod.class);
+            ScriptProvider provider = AppContext.getApplicationContext().getBean(annotationConfig.providerClass());
+            ScriptExecutor executor = AppContext.getApplicationContext().getBean(annotationConfig.executorClass());
+            return new ScriptInfo(provider, executor);
         }
 
         private Function<Parameter, String> getParameterName() {

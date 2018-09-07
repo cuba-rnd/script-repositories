@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.company.rnd.scriptrepo.web.persistentscript.PersistentScriptBrowse"
+        focusComponent="persistentscriptsTable"
+        lookupComponent="persistentscriptsTable"
+        messagesPack="com.company.rnd.scriptrepo.web.persistentscript">
+    <dsContext>
+        <groupDatasource id="persistentscriptsDs"
+                         class="com.company.rnd.scriptrepo.entity.PersistentScript"
+                         view="script-browse">
+            <query>
+                <![CDATA[select e from scriptrepo$PersistentScript e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="persistentscriptsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="persistentscriptsTable"
+                datasource="persistentscriptsDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="persistentscriptsTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="returnType"/>
+                <column id="description"/>
+                <column id="sourceText"/>
+            </columns>
+            <rows datasource="persistentscriptsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="persistentscriptsTable.create"/>
+                <button id="editBtn"
+                        action="persistentscriptsTable.edit"/>
+                <button id="removeBtn"
+                        action="persistentscriptsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

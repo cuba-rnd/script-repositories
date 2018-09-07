@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
-
+    <screen id="scriptrepo$PersistentScript.browse"
+            template="com/company/rnd/scriptrepo/web/persistentscript/persistentscript-browse.xml"/>
+    <screen id="scriptrepo$PersistentScript.edit"
+            template="com/company/rnd/scriptrepo/web/persistentscript/persistentscript-edit.xml"/>
 </screen-config>

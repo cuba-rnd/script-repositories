@@ -1,4 +1,4 @@
-package com.company.rnd.scriptrepo.core.test.data;
+package com.company.rnd.scriptrepo.core.test.files;
 
 import com.company.rnd.scriptrepo.repository.ScriptMethod;
 import com.company.rnd.scriptrepo.repository.ScriptParam;

@@ -1,8 +1,8 @@
 package com.company.rnd.scriptrepo.core;
 
 import com.company.rnd.scriptrepo.AppTestContainer;
-import com.company.rnd.scriptrepo.core.test.data.Customer;
-import com.company.rnd.scriptrepo.core.test.data.CustomerScriptRepository;
+import com.company.rnd.scriptrepo.core.test.files.Customer;
+import com.company.rnd.scriptrepo.core.test.files.CustomerScriptRepository;
 import com.haulmont.cuba.core.global.AppBeans;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class RepositoryProxyTest {
+public class FileRepositoryTest {
 
-    private static final Logger log = LoggerFactory.getLogger(RepositoryProxyTest.class);
+    private static final Logger log = LoggerFactory.getLogger(FileRepositoryTest.class);
 
     @ClassRule
     public static AppTestContainer cont = AppTestContainer.Common.INSTANCE;

@@ -1,5 +1,6 @@
-package com.company.rnd.scriptrepo.repository.factory;
+package com.company.rnd.scriptrepo.repository.executor;
 
+import com.company.rnd.scriptrepo.repository.factory.ScriptExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,9 @@ import java.util.stream.IntStream;
  * Evaluates Groovy script using JSR-223 javax.script API and bindings.
  */
 @Component
-public class GroovyScriptExecutor implements ScriptExecutor {
+public class GroovyScriptJsrExecutor implements ScriptExecutor {
 
-    private static final Logger log = LoggerFactory.getLogger(GroovyScriptExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(GroovyScriptJsrExecutor.class);
 
     @Override
     @SuppressWarnings("unchecked")

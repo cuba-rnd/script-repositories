@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
 
+    <view entity="scriptrepo$PersistentScript" name="script-browse" extends="_local">
+        <property name="name"/>
+        <property name="returnType"/>
+        <property name="description"/>
+        <property name="sourceText"/>
+        <property name="enabled"/>
+    </view>
+    <view entity="scriptrepo$PersistentScript" name="script-edit" extends="_local">
+        <property name="name"/>
+        <property name="returnType"/>
+        <property name="description"/>
+        <property name="sourceText"/>
+        <property name="enabled"/>
+    </view>
 </views>

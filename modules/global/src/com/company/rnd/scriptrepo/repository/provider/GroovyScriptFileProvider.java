@@ -1,5 +1,6 @@
-package com.company.rnd.scriptrepo.repository.factory;
+package com.company.rnd.scriptrepo.repository.provider;
 
+import com.company.rnd.scriptrepo.repository.factory.ScriptProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,9 @@ import java.util.stream.Collectors;
  * Repository interface is and file name equals to method name+'.groovy'.
  */
 @Component
-public class GroovyScriptProvider implements ScriptProvider {
+public class GroovyScriptFileProvider implements ScriptProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(GroovyScriptProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(GroovyScriptFileProvider.class);
 
     @Override
     public String getScript(Class<?> scriptRepositoryClass, String methodName) {
