@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Simple provider that gets script source from the same dir where Script
  * Repository interface is and file name equals to method name+'.groovy'.
  */
-@Component
+@Component("groovyFileProvider")
 public class GroovyScriptFileProvider implements ScriptProvider {
 
     private static final Logger log = LoggerFactory.getLogger(GroovyScriptFileProvider.class);

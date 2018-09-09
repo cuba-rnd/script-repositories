@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 /**
  * Evaluates Groovy script using JSR-223 javax.script API and bindings.
  */
-@Component
+@Component("groovyJsrExecutor")
 public class GroovyScriptJsrExecutor implements ScriptExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(GroovyScriptJsrExecutor.class);

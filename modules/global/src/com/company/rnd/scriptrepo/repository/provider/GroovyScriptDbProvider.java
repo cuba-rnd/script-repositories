@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.lang.reflect.Method;
 
-@Component
+@Component("groovyDbProvider")
 public class GroovyScriptDbProvider implements ScriptProvider {
 
     private static final Logger log = LoggerFactory.getLogger(GroovyScriptDbProvider.class);

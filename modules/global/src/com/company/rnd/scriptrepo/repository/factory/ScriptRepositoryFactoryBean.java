@@ -124,8 +124,8 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
 
         private ScriptInfo createMethodInfo(Method method) {
             ScriptMethod annotationConfig = method.getAnnotation(ScriptMethod.class);
-            ScriptProvider provider = AppContext.getApplicationContext().getBean(annotationConfig.providerClass());
-            ScriptExecutor executor = AppContext.getApplicationContext().getBean(annotationConfig.executorClass());
+            ScriptProvider provider = (ScriptProvider) AppContext.getApplicationContext().getBean(annotationConfig.providerBeanName());
+            ScriptExecutor executor = (ScriptExecutor) AppContext.getApplicationContext().getBean(annotationConfig.executorBeanName());
             return new ScriptInfo(provider, executor);
         }
 
