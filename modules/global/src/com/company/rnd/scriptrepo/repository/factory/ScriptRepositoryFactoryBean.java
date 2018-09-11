@@ -3,6 +3,7 @@ package com.company.rnd.scriptrepo.repository.factory;
 import com.company.rnd.scriptrepo.repository.ScriptMethod;
 import com.company.rnd.scriptrepo.repository.ScriptParam;
 import com.company.rnd.scriptrepo.repository.ScriptRepository;
+import com.company.rnd.scriptrepo.repository.factory.ScriptRepositoryConfigurationParser.ScriptInfo;
 import com.haulmont.cuba.core.sys.AppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,29 +17,36 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-@Component(ScriptRepositoryFactoryBean.NAME)
 public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostProcessor {
 
     public static final String NAME = "scriptRepositoryFactory";
 
     private static final Logger log = LoggerFactory.getLogger(ScriptRepositoryFactoryBean.class);
 
-    private List<String> basePackages = Collections.emptyList();
+    private final List<String> basePackages;
+
+    private final Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig;
+
+
+    public ScriptRepositoryFactoryBean(List<String> basePackages, Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig) {
+        this.basePackages = basePackages;
+        this.customAnnotationsConfig = customAnnotationsConfig;
+    }
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
@@ -71,17 +79,9 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
         }
 
         log.debug("Creating proxy for {}", repositoryClass.getName());
-        RepositoryMethodsHandler<T> handler = new RepositoryMethodsHandler<>();
+        RepositoryMethodsHandler handler = new RepositoryMethodsHandler(customAnnotationsConfig);
         return (T) Proxy.newProxyInstance(repositoryClass.getClassLoader(),
                 new Class<?>[]{repositoryClass}, handler);
-    }
-
-    public List<String> getBasePackages() {
-        return basePackages;
-    }
-
-    public void setBasePackages(List<String> basePackages) {
-        this.basePackages = basePackages;
     }
 
     static class ScriptRepositoryCandidateProvider extends ClassPathScanningCandidateComponentProvider {
@@ -98,7 +98,7 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
         }
     }
 
-    static class RepositoryMethodsHandler<T> implements InvocationHandler, Serializable {
+    static class RepositoryMethodsHandler implements InvocationHandler, Serializable {
 
         private static final Logger log = LoggerFactory.getLogger(RepositoryMethodsHandler.class);
 
@@ -106,15 +106,21 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
 
         private Map<Method, ScriptInfo> methodScriptInfoMap = new ConcurrentHashMap<>();
 
+        private final Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig;
+
+        public RepositoryMethodsHandler(Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig) {
+            this.customAnnotationsConfig = customAnnotationsConfig;
+        }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (!method.isAnnotationPresent(ScriptMethod.class)) {
+            if (!isScriptedMethod(method)) {
                 return method.invoke(defaultDelegate, args);
             }
             log.debug("Class: {}, Proxy: {}, Method: {}, Args: {}", method.getDeclaringClass().getName(), proxy.getClass(), method.getName(), args);
             ScriptInfo scriptInfo = methodScriptInfoMap.computeIfAbsent(method, m -> createMethodInfo(method));
-            ScriptProvider provider = scriptInfo.provider;
-            ScriptExecutor executor = scriptInfo.executor;
+            ScriptProvider provider = (ScriptProvider) AppContext.getApplicationContext().getBean(scriptInfo.provider);
+            ScriptExecutor executor = (ScriptExecutor) AppContext.getApplicationContext().getBean(scriptInfo.executor);
             String[] paramNames = Arrays.stream(method.getParameters())
                     .map(getParameterName())
                     .toArray(String[]::new);
@@ -122,11 +128,25 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
             return executor.eval(script, method, paramNames, args);
         }
 
+        private boolean isScriptedMethod(Method method) {
+            Annotation[] methodAnnotations = method.getAnnotations();
+            Set<Class<?>> annotClasses = Arrays.stream(methodAnnotations).map(Annotation::annotationType).collect(Collectors.toSet());
+            boolean match = customAnnotationsConfig.keySet().stream().anyMatch(annotClasses::contains);
+            return method.isAnnotationPresent(ScriptMethod.class) || match;
+        }
+
         private ScriptInfo createMethodInfo(Method method) {
-            ScriptMethod annotationConfig = method.getAnnotation(ScriptMethod.class);
-            ScriptProvider provider = (ScriptProvider) AppContext.getApplicationContext().getBean(annotationConfig.providerBeanName());
-            ScriptExecutor executor = (ScriptExecutor) AppContext.getApplicationContext().getBean(annotationConfig.executorBeanName());
-            return new ScriptInfo(provider, executor);
+            if (method.isAnnotationPresent(ScriptMethod.class)) {
+                ScriptMethod annotationConfig = method.getAnnotation(ScriptMethod.class);
+                String provider = annotationConfig.providerBeanName();
+                String executor = annotationConfig.executorBeanName();
+                return new ScriptInfo(ScriptMethod.class, provider, executor);
+            } else {
+                Annotation[] methodAnnotations = method.getAnnotations();
+                Set<Class<?>> annotClasses = Arrays.stream(methodAnnotations).map(Annotation::annotationType).collect(Collectors.toSet());
+                Class<?> annotation =  annotClasses.stream().filter(customAnnotationsConfig.keySet()::contains).findAny().orElseThrow(RuntimeException::new);
+                return customAnnotationsConfig.get(annotation);
+            }
         }
 
         private Function<Parameter, String> getParameterName() {
@@ -135,16 +155,6 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                     : p.getName();
         }
 
-    }
-
-    static class ScriptInfo {
-        final ScriptProvider provider;
-        final ScriptExecutor executor;
-
-        ScriptInfo(ScriptProvider provider, ScriptExecutor executor) {
-            this.provider = provider;
-            this.executor = executor;
-        }
     }
 
 }
