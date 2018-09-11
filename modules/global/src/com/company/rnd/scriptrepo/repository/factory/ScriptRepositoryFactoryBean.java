@@ -104,11 +104,11 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
 
         private final Object defaultDelegate = new Object();
 
-        private Map<Method, ScriptInfo> methodScriptInfoMap = new ConcurrentHashMap<>();
+        private Map<Method, MethodInvocationInfo> methodScriptInfoMap = new ConcurrentHashMap<>();
 
         private final Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig;
 
-        public RepositoryMethodsHandler(Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig) {
+        RepositoryMethodsHandler(Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig) {
             this.customAnnotationsConfig = customAnnotationsConfig;
         }
 
@@ -118,14 +118,20 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                 return method.invoke(defaultDelegate, args);
             }
             log.debug("Class: {}, Proxy: {}, Method: {}, Args: {}", method.getDeclaringClass().getName(), proxy.getClass(), method.getName(), args);
-            ScriptInfo scriptInfo = methodScriptInfoMap.computeIfAbsent(method, m -> createMethodInfo(method));
-            ScriptProvider provider = (ScriptProvider) AppContext.getApplicationContext().getBean(scriptInfo.provider);
-            ScriptExecutor executor = (ScriptExecutor) AppContext.getApplicationContext().getBean(scriptInfo.executor);
+            MethodInvocationInfo invocationInfo =
+                    methodScriptInfoMap.computeIfAbsent(method, m ->
+                    {
+                        log.trace("Creating invocation info for method {} ", method.getName());
+                        ScriptInfo scriptInfo = createMethodInfo(method);
+                        ScriptProvider provider = (ScriptProvider) AppContext.getApplicationContext().getBean(scriptInfo.provider);
+                        ScriptExecutor executor = (ScriptExecutor) AppContext.getApplicationContext().getBean(scriptInfo.executor);
+                        return new MethodInvocationInfo(provider, executor);
+                    });
             String[] paramNames = Arrays.stream(method.getParameters())
                     .map(getParameterName())
                     .toArray(String[]::new);
-            String script = provider.getScript(method);
-            return executor.eval(script, method, paramNames, args);
+            String script = invocationInfo.provider.getScript(method);
+            return invocationInfo.executor.eval(script, method, paramNames, args);
         }
 
         private boolean isScriptedMethod(Method method) {
@@ -135,7 +141,7 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
             return method.isAnnotationPresent(ScriptMethod.class) || match;
         }
 
-        private ScriptInfo createMethodInfo(Method method) {
+        private ScriptInfo createMethodInfo(Method method) throws BeanCreationException {
             if (method.isAnnotationPresent(ScriptMethod.class)) {
                 ScriptMethod annotationConfig = method.getAnnotation(ScriptMethod.class);
                 String provider = annotationConfig.providerBeanName();
@@ -143,8 +149,9 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                 return new ScriptInfo(ScriptMethod.class, provider, executor);
             } else {
                 Annotation[] methodAnnotations = method.getAnnotations();
-                Set<Class<?>> annotClasses = Arrays.stream(methodAnnotations).map(Annotation::annotationType).collect(Collectors.toSet());
-                Class<?> annotation =  annotClasses.stream().filter(customAnnotationsConfig.keySet()::contains).findAny().orElseThrow(RuntimeException::new);
+                Set<Class<? extends Annotation>> annotClasses = Arrays.stream(methodAnnotations).map(Annotation::annotationType).collect(Collectors.toSet());
+                Class<?> annotation = annotClasses.stream().filter(customAnnotationsConfig.keySet()::contains)
+                        .findAny().orElseThrow(() -> new BeanCreationException(String.format("A method %s is not a scripted method. Annotation is not configured in XML", method.getName())));
                 return customAnnotationsConfig.get(annotation);
             }
         }
@@ -155,6 +162,16 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                     : p.getName();
         }
 
+
+        class MethodInvocationInfo {
+            final ScriptProvider provider;
+            final ScriptExecutor executor;
+
+            MethodInvocationInfo(ScriptProvider provider, ScriptExecutor executor) {
+                this.provider = provider;
+                this.executor = executor;
+            }
+        }
     }
 
 }
