@@ -28,7 +28,7 @@ public class GroovyScriptDbProvider implements ScriptProvider {
                 .query("select s from scriptrepo$PersistentScript s where s.name = :name")
                 .parameter("name", scriptName)
                 .one();
-        log.trace(script.getName()+" "+script.getSourceText());
+        log.trace("Scripted method name: {} text: {}", script.getName(), script.getSourceText());
         return script.getSourceText();
     }
 }

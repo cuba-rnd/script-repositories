@@ -59,6 +59,7 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                     definition.setFactoryBeanName(NAME);
                     definition.setFactoryMethodName("createRepository");
                     definition.getConstructorArgumentValues().addGenericArgumentValue(Class.forName(definition.getBeanClassName()));
+                    definition.getConstructorArgumentValues().addGenericArgumentValue(customAnnotationsConfig);
                     registry.registerBeanDefinition(definition.getBeanClassName(), definition);
                 }
             } catch (ClassNotFoundException e) {
@@ -72,8 +73,8 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     }
 
-    @SuppressWarnings("unchecked")
-    <T> T createRepository(Class<T> repositoryClass) {
+    @SuppressWarnings({"unchecked", "unused"})
+    <T> T createRepository(Class<T> repositoryClass, Map<Class<? extends Annotation>, ScriptInfo> customAnnotationsConfig) {
         if (!repositoryClass.isAnnotationPresent(ScriptRepository.class)) {
             throw new IllegalArgumentException("Script repositories must be annotated with @ScriptRepository.");
         }
@@ -86,7 +87,7 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
 
     static class ScriptRepositoryCandidateProvider extends ClassPathScanningCandidateComponentProvider {
 
-        public ScriptRepositoryCandidateProvider() {
+        ScriptRepositoryCandidateProvider() {
             super(false);
             addIncludeFilter(new AnnotationTypeFilter(ScriptRepository.class));
         }
@@ -123,7 +124,10 @@ public class ScriptRepositoryFactoryBean implements BeanDefinitionRegistryPostPr
                     {
                         log.trace("Creating invocation info for method {} ", method.getName());
                         ScriptInfo scriptInfo = createMethodInfo(method);
+                        log.trace("Script annotation class name: {}", scriptInfo.scriptAnnotation.getName());
+                        log.trace("Provider bean name: {}", scriptInfo.provider);
                         ScriptProvider provider = (ScriptProvider) AppContext.getApplicationContext().getBean(scriptInfo.provider);
+                        log.trace("Executor bean name: {}", scriptInfo.executor);
                         ScriptExecutor executor = (ScriptExecutor) AppContext.getApplicationContext().getBean(scriptInfo.executor);
                         return new MethodInvocationInfo(provider, executor);
                     });

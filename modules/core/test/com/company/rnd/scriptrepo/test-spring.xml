@@ -12,9 +12,6 @@
             <repo:base-package>com.company.rnd.scriptrepo.core.test.files</repo:base-package>
         </repo:base-packages>
         <repo:annotations-config>
-            <repo:annotation-mapping annotation-class="com.company.rnd.scriptrepo.repository.ScriptMethod"
-                                     provider-bean-name="groovyFileProvider"
-                                     executor-bean-name="groovyJsrExecutor"/>
             <repo:annotation-mapping annotation-class="com.company.rnd.scriptrepo.core.test.database.DbGroovyScript"
                                      provider-bean-name="groovyDbProvider"
                                      executor-bean-name="groovyJsrExecutor"/>

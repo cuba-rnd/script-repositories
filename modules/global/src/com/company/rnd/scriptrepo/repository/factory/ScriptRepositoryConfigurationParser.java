@@ -60,6 +60,7 @@ public class ScriptRepositoryConfigurationParser implements BeanDefinitionParser
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     private static Map<Class<? extends Annotation>, ScriptInfo> getCustomAnnotationsConfig(Element element) throws ClassNotFoundException {
         log.trace("Reading annotations configurations to create script methods later");
         NodeList elementsByTagName = element.getElementsByTagName(String.format("%sannotations-config", createPrefix(element)));
@@ -91,7 +92,7 @@ public class ScriptRepositoryConfigurationParser implements BeanDefinitionParser
         final String provider;
         final String executor;
 
-        public ScriptInfo(Class<? extends Annotation> scriptAnnotation, String provider, String executor) {
+        ScriptInfo(Class<? extends Annotation> scriptAnnotation, String provider, String executor) {
             this.scriptAnnotation = scriptAnnotation;
             this.provider = provider;
             this.executor = executor;

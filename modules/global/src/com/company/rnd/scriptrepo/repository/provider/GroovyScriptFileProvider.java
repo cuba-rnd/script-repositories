@@ -27,7 +27,7 @@ public class GroovyScriptFileProvider implements ScriptProvider {
         Class<?> scriptRepositoryClass = method.getDeclaringClass();
         String methodName = method.getName();
         String fileName = methodName + ".groovy";
-        log.trace("Getting groovy script from file: " + fileName);
+        log.trace("Getting groovy script from file: {}", fileName);
         InputStream resourceAsStream = scriptRepositoryClass.getResourceAsStream(fileName);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
