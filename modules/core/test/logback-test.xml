@@ -36,6 +36,8 @@
 
     <logger name="com.company.rnd" level="TRACE"/>
 
+    <logger name="com.haulmont.scripting" level="TRACE"/>
+
     <logger name="com.haulmont.cuba" level="INFO"/>
 
     <logger name="com.haulmont.cuba.core.sys.CubaDefaultListableBeanFactory" level="WARN"/>

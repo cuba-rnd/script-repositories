@@ -1,7 +1,7 @@
 package com.company.rnd.scriptrepo.core.test.database;
 
-import com.company.rnd.scriptrepo.repository.ScriptParam;
-import com.company.rnd.scriptrepo.repository.ScriptRepository;
+import com.haulmont.scripting.repository.ScriptParam;
+import com.haulmont.scripting.repository.ScriptRepository;
 
 import java.math.BigDecimal;
 

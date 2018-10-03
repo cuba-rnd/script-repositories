@@ -1,9 +1,9 @@
 package com.company.rnd.scriptrepo.core.test.files;
 
-import com.company.rnd.scriptrepo.repository.ScriptMethod;
-import com.company.rnd.scriptrepo.repository.ScriptParam;
-import com.company.rnd.scriptrepo.repository.ScriptRepository;
 import com.haulmont.cuba.security.app.Authenticated;
+import com.haulmont.scripting.repository.ScriptMethod;
+import com.haulmont.scripting.repository.ScriptParam;
+import com.haulmont.scripting.repository.ScriptRepository;
 
 import java.util.Date;
 import java.util.UUID;
