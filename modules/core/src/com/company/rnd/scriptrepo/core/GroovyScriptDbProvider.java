@@ -5,6 +5,7 @@ import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.scripting.repository.provider.ScriptProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scripting.ScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ public class GroovyScriptDbProvider implements ScriptProvider {
     }
 
     @Override
-    public String getScript(Method method) {
+    public ScriptSource getScript(Method method) {
         Class<?> scriptRepositoryClass = method.getDeclaringClass();
         String methodName = method.getName();
         String scriptName = scriptRepositoryClass.getSimpleName() + "." + methodName;
@@ -35,7 +36,7 @@ public class GroovyScriptDbProvider implements ScriptProvider {
         try {
             script = getScriptTextbyName(scriptName);
             log.trace("Scripted method name: {} text: {}", scriptName, script);
-            return script;
+            return new DbScriptSource(script);
         } catch (Exception e) {
             throw new IllegalStateException("Cannot fetch data from the database", e);
         }
