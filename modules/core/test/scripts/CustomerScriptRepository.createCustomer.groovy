@@ -1,3 +1,5 @@
+package scripts
+
 import com.company.rnd.scriptrepo.core.test.files.Customer
 
 class CustomerImpl implements Customer{
@@ -31,8 +33,9 @@ class CustomerImpl implements Customer{
     }
 }
 
+
 CustomerImpl c = new CustomerImpl()
 c.setId(UUID.randomUUID())
 c.setName(name)
 c.setBirthDate(birthDate)
-c
+return c

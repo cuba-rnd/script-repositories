@@ -32,11 +32,6 @@ public class FileRepositoryTest {
     public void setUp() throws Exception {
         repo = AppBeans.get(CustomerScriptRepository.class);
     }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Test
     public void testRunSimpleScript() {
         UUID customerId = UUID.randomUUID();
