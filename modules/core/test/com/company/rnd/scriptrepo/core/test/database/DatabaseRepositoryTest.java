@@ -13,12 +13,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scripting.ScriptSource;
 
 import java.math.BigDecimal;
 
 public class DatabaseRepositoryTest {
-
-    private static final Logger log = LoggerFactory.getLogger(FileRepositoryTest.class);
 
     @ClassRule
     public static AppTestContainer cont = AppTestContainer.Common.INSTANCE;
@@ -33,13 +32,6 @@ public class DatabaseRepositoryTest {
         metadata = cont.metadata();
         persistence = cont.persistence();
         persistence.setSoftDeletion(false);
-        taxService = AppBeans.get(TestTaxService.class);
-
-        script = metadata.create(PersistentScript.class);
-        script.setName("TestTaxCalculator.calculateTax");
-        script.setSourceText("return amount*0.13");
-
-        persistence.runInTransaction(em -> em.persist(script));
     }
 
     @After
@@ -48,8 +40,33 @@ public class DatabaseRepositoryTest {
     }
 
     @Test
-    public void testTaxCalculation () {
-        Assert.assertTrue(taxService.calculateTaxAmount(BigDecimal.TEN).compareTo(BigDecimal.valueOf(1.4)) < 0);
+    public void given_aScriptIsExistingInDb_when_theScriptRepositoryInterfaceIsExecuted_then_theDbScriptIsEvaluated() {
+
+        // given:
+        script = createDbScript(
+                "TestTaxCalculator.calculateTax",
+                "return amount*0.13"
+        );
+
+        // and:
+        taxService = AppBeans.get(TestTaxService.class);
+
+        // when:
+        BigDecimal result = taxService.calculateTaxAmount(BigDecimal.TEN);
+
+        // then:
+        Assert.assertTrue(result.compareTo(BigDecimal.valueOf(1.4)) < 0);
+    }
+
+    private PersistentScript createDbScript(String scriptName, String scriptSourceText) {
+        PersistentScript script = metadata.create(PersistentScript.class);
+
+        script.setName(scriptName);
+        script.setSourceText(scriptSourceText);
+
+        persistence.runInTransaction(em -> em.persist(script));
+
+        return script;
     }
 
 }

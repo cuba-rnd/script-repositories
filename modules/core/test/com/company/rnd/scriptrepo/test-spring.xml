@@ -13,7 +13,8 @@
         <repo:annotations-config>
             <repo:annotation-mapping annotation-class="com.company.rnd.scriptrepo.core.test.database.DbGroovyScript"
                                      provider-bean-name="groovyDbProvider"
-                                     executor-bean-name="groovyJsrExecutor"/>
+                                     timeout="-1"
+                                     evaluator-bean-name="groovyJsrEvaluator"/>
         </repo:annotations-config>
     </repo:script-repositories>
 
